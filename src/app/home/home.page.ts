@@ -19,7 +19,7 @@ export class HomePage implements OnInit {
 
   enviarMensaje(form: NgForm){
     this.mensajeService.enviarMensaje(form.value.mensaje)
-      .subscribe(res=> {
+      .subscribe((res: any)=> {
         console.log(res)
         this.respuesta = res.respuestaServidor;
 
