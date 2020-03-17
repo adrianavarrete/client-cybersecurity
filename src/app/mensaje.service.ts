@@ -9,13 +9,18 @@ export class MensajeService {
 
   constructor(private http: HttpClient) { }
 
-    readonly URL = 'http://localhost:8000';
+  readonly URL = 'http://localhost:8000';
 
 
-    enviarMensaje(mensaje: string) {
-        
-        return this.http.post(this.URL + '/hola', {
-          mensaje
-        });
-      }
+  enviarMensaje(mensaje: any) {
+
+    return this.http.post(this.URL + '/hola', {
+      mensaje
+    });
+  }
+
+  dameClave() {
+    return this.http.get(this.URL + '/key');
+  }
+
 }
