@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ExistingSansProvider } from '@angular/core';
 import { MensajeService } from '../mensaje.service';
 import { Mensaje } from './Mensaje';
 import { NgForm } from '@angular/forms';
@@ -16,9 +16,9 @@ import * as bigconv from 'bigint-conversion'
 export class HomePage implements OnInit {
 
   respuesta: any;
-  publicKey: any;
-  privateKey: any;
-  serverPublicKey: any;
+  publicKey: rsa.PublicKey;
+  privateKey: rsa.PrivateKey;
+  serverPublicKey: rsa.PublicKey;
 
   mensaje: any
 
@@ -30,12 +30,13 @@ export class HomePage implements OnInit {
   }
 
   enviarMensaje(form: NgForm) {
-    this.mensaje = new Mensaje(bigconv.bigintToHex(rsa.encrypt(bigconv.textToBigint(form.value.mensajeHTML), this.serverPublicKey[0], this.serverPublicKey[1])), bigconv.bigintToHex(this.publicKey.e), bigconv.bigintToHex(this.publicKey.n))
+    this.mensaje = new Mensaje(bigconv.bigintToHex(this.serverPublicKey.encrypt(bigconv.textToBigint(form.value.mensajeHTML))),bigconv.bigintToHex(this.publicKey.e), bigconv.bigintToHex(this.publicKey.n))
+
     this.mensajeService.enviarMensaje(this.mensaje)
       .subscribe((res: any) => {
-        this.respuesta = bigconv.bigintToText(rsa.decrypt(bigconv.hexToBigint(res.respuestaServidor), this.privateKey.d, this.privateKey.publicKey.n));
+        this.respuesta = bigconv.bigintToText(this.privateKey.decrypt(bigconv.hexToBigint(res.respuestaServidor)))
 
-      })
+      });
   }
 
   async claves() {
@@ -46,7 +47,7 @@ export class HomePage implements OnInit {
 
   dameClave() {
     this.mensajeService.dameClave().subscribe((res: any) => {
-      this.serverPublicKey = [bigconv.hexToBigint(res.e), bigconv.hexToBigint(res.n)]
+      this.serverPublicKey = new rsa.PublicKey(bigconv.hexToBigint(res.e),bigconv.hexToBigint(res.n))
     })
   }
 
