@@ -29,8 +29,10 @@ export class HomePage implements OnInit {
     this.dameClave()
   }
 
-  enviarMensaje(form: NgForm) {
-    this.mensaje = new Mensaje(bigconv.bigintToHex(this.serverPublicKey.encrypt(bigconv.textToBigint(form.value.mensajeHTML))),bigconv.bigintToHex(this.publicKey.e), bigconv.bigintToHex(this.publicKey.n))
+  async enviarMensaje(form: NgForm) {
+    var m = this.serverPublicKey.encrypt(bigconv.textToBigint(form.value.mensajeHTML))
+    
+    this.mensaje = new Mensaje(bigconv.bigintToHex(m),bigconv.bigintToHex(this.publicKey.e), bigconv.bigintToHex(this.publicKey.n))
 
     this.mensajeService.enviarMensaje(this.mensaje)
       .subscribe((res: any) => {
@@ -38,6 +40,25 @@ export class HomePage implements OnInit {
 
       });
   }
+
+  async firmaCiega(form: NgForm) {
+    var r = await big.prime(3072);
+    //var r = BigInt(Math.floor(Math.random() * 2000000) + 1  )
+    var m = bigconv.textToBigint(form.value.mensajeHTML);
+    
+
+    var bm = this.blindMessage(m,r,this.serverPublicKey.e,this.serverPublicKey.n)
+    
+    this.mensaje = new Mensaje(bigconv.bigintToHex(bm),bigconv.bigintToHex(this.publicKey.e), bigconv.bigintToHex(this.publicKey.n))
+
+    this.mensajeService.firmaCiega(this.mensaje)
+      .subscribe((res: any) => {
+        bm = this.verifyBlindSignature(bigconv.hexToBigint(res.respuestaServidor),r,this.serverPublicKey.e,this.serverPublicKey.n);
+        this.respuesta = bigconv.bigintToText(this.serverPublicKey.verify(bm))
+
+      });
+  }
+
 
   async claves() {
     const { publicKey, privateKey } = await rsa.generateRandomKeys(3072);
@@ -49,6 +70,23 @@ export class HomePage implements OnInit {
     this.mensajeService.dameClave().subscribe((res: any) => {
       this.serverPublicKey = new rsa.PublicKey(bigconv.hexToBigint(res.e),bigconv.hexToBigint(res.n))
     })
+  }
+
+  blindMessage(m: bigint, r: bigint, e: bigint, n: bigint){
+    var ReModn = big.modPow(r,e,n);
+    var bm = (m * ReModn) % n;
+
+    return bm;
+
+  }
+
+  verifyBlindSignature(bs: bigint, r: bigint, e: bigint, n: bigint){
+    var rInvmodn = big.modInv(r,n);
+
+    var bm = (bs*rInvmodn) % n;
+
+    return bm;
+
   }
 
 }

@@ -19,6 +19,13 @@ export class MensajeService {
     });
   }
 
+  firmaCiega(mensaje: any) {
+
+    return this.http.post(this.URL + '/blindSign', {
+      mensaje
+    });
+  }
+
   dameClave() {
     return this.http.get(this.URL + '/key');
   }
