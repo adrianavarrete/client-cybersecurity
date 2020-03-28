@@ -26,6 +26,13 @@ export class MensajeService {
     });
   }
 
+  enviarBNoRepudio(mensaje: any) {
+
+    return this.http.post(this.URL + '/mensaje1NoRepudio', {
+      mensaje
+    });
+  }
+
   dameClave() {
     return this.http.get(this.URL + '/key');
   }
