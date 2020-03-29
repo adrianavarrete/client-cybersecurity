@@ -28,8 +28,12 @@
           <div class="ion-padding">
             <ion-button expand="block" type="submit" class="ion-no-margin" (click)="enviarMensaje(userForm)">
               Enviar</ion-button>
-              <ion-button expand="block" type="submit" class="ion-no-margin" (click)="firmaCiega(userForm)">
-                Firma ciega</ion-button>
+            <br>
+            <ion-button expand="block" type="submit" class="ion-no-margin" (click)="firmaCiega(userForm)">
+              Firma ciega</ion-button>
+            <br>
+            <ion-button expand="block" type="submit" class="ion-no-margin" (click)="enviaraBnoRepudio(userForm)">
+              Enviar con Protocolo no repudio</ion-button>
           </div>
 
         </ion-col>
@@ -44,7 +48,7 @@
             <ion-card-title>Respuesta</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <ion-textarea readonly="true" name="respuesta">{{respuesta}}</ion-textarea>
+            <ion-textarea readonly="true" name="respuesta">{{respuesta | async}}</ion-textarea>
           </ion-card-content>
         </ion-card>
       </ion-col>
