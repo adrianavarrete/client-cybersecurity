@@ -18,9 +18,10 @@ export class HomePage implements OnInit {
 
   respuesta = new Observable<string>( (observer: Observer<string>) => {
     setInterval( () => {
-      observer.next(new Date().toString()), 1000;
+      observer.next(this.res), 1000;
     })
   });
+  res: string;
   publicKey: rsa.PublicKey;
   privateKey: rsa.PrivateKey;
   serverPublicKey: rsa.PublicKey;
@@ -59,7 +60,7 @@ export class HomePage implements OnInit {
     this.mensajeService.firmaCiega(this.mensaje)
       .subscribe((res: any) => {
         bm = this.verifyBlindSignature(bigconv.hexToBigint(res.respuestaServidor),r,this.serverPublicKey.e,this.serverPublicKey.n);
-        //this.respuesta = bigconv.bigintToText(this.serverPublicKey.verify(bm))
+        this.res = bigconv.bigintToText(this.serverPublicKey.verify(bm))
 
       });
   }
