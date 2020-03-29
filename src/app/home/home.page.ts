@@ -5,6 +5,7 @@ import { NgForm } from '@angular/forms';
 import * as big from 'bigint-crypto-utils'
 import * as rsa from 'rsa';
 import * as bigconv from 'bigint-conversion'
+import { Observable, Observer } from 'rxjs';
 
 
 
@@ -15,7 +16,11 @@ import * as bigconv from 'bigint-conversion'
 })
 export class HomePage implements OnInit {
 
-  respuesta: any;
+  respuesta = new Observable<string>( (observer: Observer<string>) => {
+    setInterval( () => {
+      observer.next(new Date().toString()), 1000;
+    })
+  });
   publicKey: rsa.PublicKey;
   privateKey: rsa.PrivateKey;
   serverPublicKey: rsa.PublicKey;
@@ -36,7 +41,7 @@ export class HomePage implements OnInit {
 
     this.mensajeService.enviarMensaje(this.mensaje)
       .subscribe((res: any) => {
-        this.respuesta = bigconv.bigintToText(this.privateKey.decrypt(bigconv.hexToBigint(res.respuestaServidor)))
+        //this.respuesta = bigconv.bigintToText(this.privateKey.decrypt(bigconv.hexToBigint(res.respuestaServidor)))
 
       });
   }
@@ -54,7 +59,7 @@ export class HomePage implements OnInit {
     this.mensajeService.firmaCiega(this.mensaje)
       .subscribe((res: any) => {
         bm = this.verifyBlindSignature(bigconv.hexToBigint(res.respuestaServidor),r,this.serverPublicKey.e,this.serverPublicKey.n);
-        this.respuesta = bigconv.bigintToText(this.serverPublicKey.verify(bm))
+        //this.respuesta = bigconv.bigintToText(this.serverPublicKey.verify(bm))
 
       });
   }
