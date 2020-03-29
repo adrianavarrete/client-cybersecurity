@@ -6,6 +6,7 @@ import * as big from 'bigint-crypto-utils'
 import * as rsa from 'rsa';
 import * as bigconv from 'bigint-conversion'
 import * as sha from 'object-sha'
+import { Observable } from 'rxjs';
 
 
 
@@ -20,6 +21,7 @@ export class HomePage implements OnInit {
   publicKey: rsa.PublicKey;
   privateKey: rsa.PrivateKey;
   serverPublicKey: rsa.PublicKey;
+  ttpPublicKey: rsa.PublicKey;
   key: any;
 
   mensaje: any
@@ -94,8 +96,41 @@ export class HomePage implements OnInit {
 
         if (hashBody == bigconv.bigintToText(this.serverPublicKey.verify(bigconv.hexToBigint(res.pr)))) {
           console.log(res.body)
-        }else{
+          await this.enviarKeyTTPnoRepudio();
+        } else {
           console.log("No se ha podido verificar al servidor B")
+        }
+      });
+  }
+
+  async enviarKeyTTPnoRepudio() {
+       
+    const body = {
+      type: '3',
+      src: 'A',
+      ttp: 'TTP',
+      dst: 'B',
+      msg: this.key,
+      timestamp: Date.now()
+    }
+
+    this.dameClaveTTP();
+
+    const digest = await sha.digest(body, 'SHA-256');
+    console.log(digest);
+    const pko = bigconv.bigintToHex(this.privateKey.sign(bigconv.textToBigint(digest)));
+    const e = bigconv.bigintToHex(this.publicKey.e);
+    const n = bigconv.bigintToHex(this.publicKey.n);
+
+
+    this.mensajeService.enviarTTPNoRepudio({ body, pko, e, n })
+      .subscribe(async (res: any) => {
+        const hashBody = await sha.digest(res.body, 'SHA-256');
+
+        if (hashBody == bigconv.bigintToText(this.ttpPublicKey.verify(bigconv.hexToBigint(res.pkp)))) {
+          console.log(res.body)
+        } else {
+          console.log("No se ha podido verificar a la TTP")
         }
       });
   }
@@ -110,6 +145,12 @@ export class HomePage implements OnInit {
   dameClave() {
     this.mensajeService.dameClave().subscribe((res: any) => {
       this.serverPublicKey = new rsa.PublicKey(bigconv.hexToBigint(res.e), bigconv.hexToBigint(res.n))
+    })
+  }
+
+   dameClaveTTP(){
+    this.mensajeService.dameClaveTTP().subscribe((res: any) => {
+     this.ttpPublicKey = new rsa.PublicKey(bigconv.hexToBigint(res.e), bigconv.hexToBigint(res.n))
     })
   }
 
@@ -171,8 +212,8 @@ export class HomePage implements OnInit {
 
     console.log(key);
 
-    const importedKey = await crypto.subtle.importKey("jwk",key,methodKey,false,keyUsages);
-    return await crypto.subtle.encrypt(algoEncrypt,importedKey, bigconv.textToBuf(mensaje));
+    const importedKey = await crypto.subtle.importKey("jwk", key, methodKey, false, keyUsages);
+    return await crypto.subtle.encrypt(algoEncrypt, importedKey, bigconv.textToBuf(mensaje));
 
   }
 

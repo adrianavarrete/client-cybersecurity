@@ -10,6 +10,7 @@ export class MensajeService {
   constructor(private http: HttpClient) { }
 
   readonly URL = 'http://localhost:8000';
+  readonly URLTTP = 'http://localhost:8500';
 
 
   enviarMensaje(mensaje: any) {
@@ -33,8 +34,19 @@ export class MensajeService {
     });
   }
 
+  enviarTTPNoRepudio(mensaje: any) {
+
+    return this.http.post(this.URLTTP + '/mensaje3NoRepudio', {
+      mensaje
+    });
+  }
+
   dameClave() {
     return this.http.get(this.URL + '/key');
+  }
+
+  dameClaveTTP() {
+    return this.http.get(this.URLTTP + '/key');
   }
 
 }
