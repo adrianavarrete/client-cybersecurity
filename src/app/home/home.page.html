@@ -48,7 +48,7 @@
             <ion-card-title>Respuesta</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <ion-textarea readonly="true" name="respuesta">{{respuesta}}</ion-textarea>
+            <ion-textarea readonly="true" name="respuesta">{{respuesta | async}}</ion-textarea>
           </ion-card-content>
         </ion-card>
       </ion-col>

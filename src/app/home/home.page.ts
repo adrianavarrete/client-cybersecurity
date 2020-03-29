@@ -6,7 +6,7 @@ import * as big from 'bigint-crypto-utils'
 import * as rsa from 'rsa';
 import * as bigconv from 'bigint-conversion'
 import * as sha from 'object-sha'
-import { Observable } from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 
 
 
@@ -17,7 +17,12 @@ import { Observable } from 'rxjs';
 })
 export class HomePage implements OnInit {
 
-  respuesta: any;
+  respuesta = new Observable<string>((observer: Observer<string>) => {
+    setInterval(() => {
+      observer.next(this.res), 1000;
+    })
+  });
+  res: string;
   publicKey: rsa.PublicKey;
   privateKey: rsa.PrivateKey;
   serverPublicKey: rsa.PublicKey;
@@ -48,14 +53,13 @@ export class HomePage implements OnInit {
 
     this.mensajeService.enviarMensaje(this.mensaje)
       .subscribe((res: any) => {
-        this.respuesta = bigconv.bigintToText(this.privateKey.decrypt(bigconv.hexToBigint(res.respuestaServidor)))
+        this.res = bigconv.bigintToText(this.privateKey.decrypt(bigconv.hexToBigint(res.respuestaServidor)))
 
       });
   }
 
   async firmaCiega(form: NgForm) {
-    //var r = await big.prime(3072);
-    var r = BigInt(Math.floor(Math.random() * 2000000) + 1)
+    var r = await big.prime(3072);
     var m = bigconv.textToBigint(form.value.mensajeHTML);
 
 
@@ -66,7 +70,7 @@ export class HomePage implements OnInit {
     this.mensajeService.firmaCiega(this.mensaje)
       .subscribe((res: any) => {
         bm = this.verifyBlindSignature(bigconv.hexToBigint(res.respuestaServidor), r, this.serverPublicKey.e, this.serverPublicKey.n);
-        this.respuesta = bigconv.bigintToText(this.serverPublicKey.verify(bm))
+        this.res = bigconv.bigintToText(this.serverPublicKey.verify(bm))
 
       });
   }
@@ -99,12 +103,13 @@ export class HomePage implements OnInit {
           await this.enviarKeyTTPnoRepudio();
         } else {
           console.log("No se ha podido verificar al servidor B")
+          this.res = "No se ha podido verificar al servidor B"
         }
       });
   }
 
   async enviarKeyTTPnoRepudio() {
-       
+
     const body = {
       type: '3',
       src: 'A',
@@ -129,8 +134,10 @@ export class HomePage implements OnInit {
 
         if (hashBody == bigconv.bigintToText(this.ttpPublicKey.verify(bigconv.hexToBigint(res.pkp)))) {
           console.log(res.body)
+          this.res = "El mensaje ha sido recibido de forma correcta por el destinatario B y la clave ya se encuentra en la TTP"
         } else {
           console.log("No se ha podido verificar a la TTP")
+          this.res = "No se ha podido verificar a la TTP"
         }
       });
   }
@@ -148,9 +155,9 @@ export class HomePage implements OnInit {
     })
   }
 
-   dameClaveTTP(){
+  dameClaveTTP() {
     this.mensajeService.dameClaveTTP().subscribe((res: any) => {
-     this.ttpPublicKey = new rsa.PublicKey(bigconv.hexToBigint(res.e), bigconv.hexToBigint(res.n))
+      this.ttpPublicKey = new rsa.PublicKey(bigconv.hexToBigint(res.e), bigconv.hexToBigint(res.n))
     })
   }
 
