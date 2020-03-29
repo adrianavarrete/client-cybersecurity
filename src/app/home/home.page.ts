@@ -93,7 +93,7 @@ export class HomePage implements OnInit {
         const hashBody = await sha.digest(res.body, 'SHA-256');
 
         if (hashBody == bigconv.bigintToText(this.serverPublicKey.verify(bigconv.hexToBigint(res.pr)))) {
-          console.log(res.body.error)
+          console.log(res.body)
         }else{
           console.log("No se ha podido verificar al servidor B")
         }
