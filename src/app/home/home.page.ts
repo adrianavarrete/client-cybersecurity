@@ -28,6 +28,7 @@ export class HomePage implements OnInit {
   serverPublicKey: rsa.PublicKey;
   ttpPublicKey: rsa.PublicKey;
   key: any;
+  iv: any;
 
   mensaje: any
 
@@ -76,7 +77,10 @@ export class HomePage implements OnInit {
   }
 
   async enviaraBnoRepudio(form: NgForm) {
-    const c = await this.encryptSKey(this.key, form.value.mensajeHTML);
+
+    this.iv = window.crypto.getRandomValues(new Uint8Array(16));
+
+    const c = await this.encryptSKey(this.key, form.value.mensajeHTML, this.iv);
 
     const body = {
       type: '1',
@@ -116,9 +120,10 @@ export class HomePage implements OnInit {
       ttp: 'TTP',
       dst: 'B',
       msg: this.key,
+      iv: this.toHexString(this.iv),
       timestamp: Date.now()
     }
-
+    console.log(this.toHexString(this.iv));
     this.dameClaveTTP();
 
     const digest = await sha.digest(body, 'SHA-256');
@@ -180,8 +185,6 @@ export class HomePage implements OnInit {
 
   async getSimetricKey() {
 
-    let self = this
-
     var methodKeyGen = {
       name: 'AES-CBC',
       length: 128
@@ -198,8 +201,7 @@ export class HomePage implements OnInit {
 
   }
 
-  async encryptSKey(key, mensaje) {
-    var iv = window.crypto.getRandomValues(new Uint8Array(16));
+  async encryptSKey(key, mensaje, iv) {
 
     var methodKey = {
       name: 'AES-CBC',
@@ -223,6 +225,14 @@ export class HomePage implements OnInit {
     return await crypto.subtle.encrypt(algoEncrypt, importedKey, bigconv.textToBuf(mensaje));
 
   }
+
+  toHexString(byteArray) {
+    return Array.prototype.map.call(byteArray, function (byte) {
+      return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+    }).join('');
+  }
+
+
 
 
 
