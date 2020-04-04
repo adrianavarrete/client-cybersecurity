@@ -42,6 +42,7 @@ export class HomePage implements OnInit {
     this.claves()
     this.dameClave()
     this.key = await this.getSimetricKey()
+    
 
 
   }
@@ -119,11 +120,10 @@ export class HomePage implements OnInit {
       src: 'A',
       ttp: 'TTP',
       dst: 'B',
-      msg: this.key,
-      iv: this.toHexString(this.iv),
+      msg: bigconv.bufToHex(this.key),
+      iv: bigconv.bufToHex(this.iv),
       timestamp: Date.now()
     }
-    console.log(this.toHexString(this.iv));
     this.dameClaveTTP();
 
     const digest = await sha.digest(body, 'SHA-256');
@@ -196,7 +196,8 @@ export class HomePage implements OnInit {
     ];
 
     const keyData = await crypto.subtle.generateKey(methodKeyGen, true, keyUsages);
-    const exportKeyData = await crypto.subtle.exportKey("jwk", keyData)
+    const exportKeyData = await crypto.subtle.exportKey("raw", keyData)
+    console.log(exportKeyData)
     return exportKeyData;
 
   }
@@ -221,16 +222,11 @@ export class HomePage implements OnInit {
 
     console.log(key);
 
-    const importedKey = await crypto.subtle.importKey("jwk", key, methodKey, false, keyUsages);
+    const importedKey = await crypto.subtle.importKey("raw", key, methodKey, false, keyUsages);
     return await crypto.subtle.encrypt(algoEncrypt, importedKey, bigconv.textToBuf(mensaje));
 
   }
 
-  toHexString(byteArray) {
-    return Array.prototype.map.call(byteArray, function (byte) {
-      return ('0' + (byte & 0xFF).toString(16)).slice(-2);
-    }).join('');
-  }
 
 
 
