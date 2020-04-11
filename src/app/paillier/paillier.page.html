@@ -1,10 +1,9 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>
-      Cybersecurity
-    </ion-title>
+    <ion-title>paillier</ion-title>
   </ion-toolbar>
 </ion-header>
+
 <ion-content>
   <ion-grid fixed>
     <form #userForm="ngForm" (ngSumbit)="enviarMensaje(userForm)">
@@ -51,16 +50,6 @@
             <ion-textarea readonly="true" name="respuesta">{{respuesta | async}}</ion-textarea>
           </ion-card-content>
         </ion-card>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col size-md="3" offset-md="3">
-        <ion-button expand="block" type="submit" class="ion-no-margin" (click)="goToPaillier()">
-          Go to Paillier</ion-button>
-      </ion-col>
-      <ion-col size-md="3" offset-md="0">
-        <ion-button expand="block" type="submit" class="ion-no-margin" (click)="enviarMensaje(userForm)">
-          Go to Secret</ion-button>
       </ion-col>
     </ion-row>
 

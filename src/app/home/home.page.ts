@@ -7,6 +7,8 @@ import * as rsa from 'rsa';
 import * as bigconv from 'bigint-conversion'
 import * as sha from 'object-sha'
 import { Observable, Observer } from 'rxjs';
+import { Router } from "@angular/router";
+import { ActivatedRoute } from '@angular/router';
 
 
 
@@ -34,7 +36,7 @@ export class HomePage implements OnInit {
 
 
 
-  constructor(private mensajeService: MensajeService) {
+  constructor(private mensajeService: MensajeService, private router: Router) {
 
   }
 
@@ -225,6 +227,10 @@ export class HomePage implements OnInit {
     const importedKey = await crypto.subtle.importKey("raw", key, methodKey, false, keyUsages);
     return await crypto.subtle.encrypt(algoEncrypt, importedKey, bigconv.textToBuf(mensaje));
 
+  }
+
+  goToPaillier(){
+    this.router.navigateByUrl('/paillier');
   }
 
 
