@@ -11,12 +11,37 @@
         <ion-col size-md="6" offset-md="3">
           <ion-card>
             <ion-card-header>
-              <ion-card-title>Enviar mensaje al servidor</ion-card-title>
+              <ion-card-title>Usuario 1</ion-card-title>
             </ion-card-header>
             <ion-card-content>
               <ion-item>
-                <ion-label position="floating">Mensaje</ion-label>
-                <ion-input type="text" [(ngModel)]="mensajeHTML" name="mensajeHTML"></ion-input>
+                <ion-label position="floating">Cantidad</ion-label>
+                <ion-input type="text" [(ngModel)]="cantidad1" name="cantidad1"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">Cantidad cifrada</ion-label>
+                <br>
+                <ion-textarea readonly="true" name="cantidad1ci">{{c1}}</ion-textarea>
+              </ion-item>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size-md="6" offset-md="3">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>Usuario 2</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-item>
+                <ion-label position="floating">Cantidad</ion-label>
+                <ion-input type="text" [(ngModel)]="cantidad2" name="cantidad2"></ion-input>
+              </ion-item>              
+              <ion-item>
+                <ion-label position="floating">Cantidad cifrada</ion-label>
+                <br>
+                <ion-textarea readonly="true" name="cantidad2ci">{{c2}}</ion-textarea>
               </ion-item>
             </ion-card-content>
           </ion-card>
@@ -25,14 +50,8 @@
       <ion-row>
         <ion-col size-md="6" offset-md="3">
           <div class="ion-padding">
-            <ion-button expand="block" type="submit" class="ion-no-margin" (click)="enviarMensaje(userForm)">
+            <ion-button expand="block" type="submit" class="ion-no-margin" (click)="sendMessages(userForm)">
               Enviar</ion-button>
-            <br>
-            <ion-button expand="block" type="submit" class="ion-no-margin" (click)="firmaCiega(userForm)">
-              Firma ciega</ion-button>
-            <br>
-            <ion-button expand="block" type="submit" class="ion-no-margin" (click)="enviaraBnoRepudio(userForm)">
-              Enviar con Protocolo no repudio</ion-button>
           </div>
 
         </ion-col>
@@ -44,12 +63,25 @@
       <ion-col size-md="6" offset-md="3">
         <ion-card>
           <ion-card-header>
-            <ion-card-title>Respuesta</ion-card-title>
+            <ion-card-title>Respuesta descifrada</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <ion-textarea readonly="true" name="respuesta">{{respuesta | async}}</ion-textarea>
+
+            <ion-item>
+              <ion-textarea readonly="true" name="respuestades">{{ respuesta }}</ion-textarea>
+            </ion-item>
           </ion-card-content>
         </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size-md="3" offset-md="3">
+        <ion-button expand="block" type="submit" class="ion-no-margin" (click)="goToHome()">
+          Go to Home</ion-button>
+      </ion-col>
+      <ion-col size-md="3" offset-md="0">
+        <!-- <ion-button expand="block" type="submit" class="ion-no-margin" (click)="enviarMensaje(userForm)">
+          Go to Secret</ion-button> -->
       </ion-col>
     </ion-row>
 

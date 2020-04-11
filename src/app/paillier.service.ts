@@ -15,4 +15,8 @@ export class PaillierService {
   dameClave() {
     return this.http.get(this.URL + '/paillierKey');
   }
+
+  send(body){
+    return this.http.post(this.URL + '/suma', body);
+  }
 }
