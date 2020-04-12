@@ -30,9 +30,9 @@ export class SecretPage implements OnInit {
     this.dameSecretSplit()
   }
 
-  dameSecretSplit(){
+  dameSecretSplit() {
 
-    this.secretService.dameSecretSplit().subscribe((res:any) => {
+    this.secretService.dameSecretSplit().subscribe((res: any) => {
       this.shares = res.respuestaServidor
       this.s1 = bigconv.bufToHex(this.shares[0].data);
       this.s2 = bigconv.bufToHex(this.shares[1].data);
@@ -41,7 +41,7 @@ export class SecretPage implements OnInit {
     })
   }
 
-  revealSecret(form: NgForm){
+  revealSecret(form: NgForm) {
 
     var array = []
 
@@ -49,15 +49,18 @@ export class SecretPage implements OnInit {
       array.push(element)
     });
 
-   
 
-    this.secretService.dameShamirKey(array).subscribe((res:any) => {
+
+    this.secretService.dameShamirKey(array).subscribe((res: any) => {
       this.secret = bigconv.bufToText(res.respuestaServidor.data);
       console.log(bigconv.bufToText(this.secret.data));
     })
 
     console.log(this.secret);
 
+  }
+  goToHome() {
+    this.router.navigateByUrl('/home');
   }
 
 }
