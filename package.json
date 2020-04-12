@@ -30,6 +30,7 @@
     "paillier-bigint": "^3.0.4",
     "rsa": "file:../rsa-cybersecurity",
     "rxjs": "~6.5.1",
+    "shamirs-secret-sharing": "^1.0.1",
     "tslib": "^1.9.0",
     "zone.js": "~0.9.1"
   },
