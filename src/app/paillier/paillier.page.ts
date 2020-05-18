@@ -45,8 +45,8 @@ export class PaillierPage implements OnInit {
   }
 
   sendMessages(form: NgForm){
-    var c1 : any = bigconv.textToBigint(form.value.cantidad1)
-    var c2 : any = bigconv.textToBigint(form.value.cantidad2)
+    var c1 : any = BigInt(form.value.cantidad1)
+    var c2 : any = BigInt(form.value.cantidad2)
 
     var cUser1 = this.serverPublicKey.encrypt(c1);
     var cUser2 = this.serverPublicKey.encrypt(c2);
@@ -61,8 +61,8 @@ export class PaillierPage implements OnInit {
     }
 
     this.paillierService.send(body).subscribe((res:any) =>{
-      this.respuesta = bigconv.bigintToText(bigconv.hexToBigint(res.suma));
-      console.log(bigconv.bigintToText(bigconv.hexToBigint(res.suma)))
+      this.respuesta = bigconv.hexToBigint(res.suma).toString();
+      console.log(bigconv.hexToBigint(res.suma));
     })
 
 
