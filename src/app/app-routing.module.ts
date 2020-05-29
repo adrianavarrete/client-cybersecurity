@@ -8,6 +8,10 @@ const routes: Routes = [
     path: 'paillier',
     loadChildren: () => import('./paillier/paillier.module').then( m => m.PaillierPageModule)
   },
+  {
+    path: 'secret',
+    loadChildren: () => import('./secret/secret.module').then( m => m.SecretPageModule)
+  },
 ];
 
 @NgModule({

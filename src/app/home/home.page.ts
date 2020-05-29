@@ -233,6 +233,10 @@ export class HomePage implements OnInit {
     this.router.navigateByUrl('/paillier');
   }
 
+  goToSecret(){
+    this.router.navigateByUrl('/secret');
+  }
+
 
 
 
